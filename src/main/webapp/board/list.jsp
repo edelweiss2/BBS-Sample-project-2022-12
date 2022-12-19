@@ -16,6 +16,8 @@ th, td {
 	<div class="container" style="margin-top: 80px;">
 		<div class="row">
 			<%@ include file="../common/aside.jsp"%>
+			
+			<!-- ======== main ======== -->
 			<div class="col-sm-9">
 				<table class="table table-sm table-borderless">
 					<form action="" method="post">
@@ -75,8 +77,10 @@ th, td {
 					<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
 				</ul>
 			</div>
+			<!-- ======== main ======== -->
 		</div>
 	</div>
+	
 	<%@ include file="../common/bottom.jsp"%>
 </body>
 </html>
