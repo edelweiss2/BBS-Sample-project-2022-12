@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -53,21 +54,21 @@ th, td {
 						<th class="col-2">날짜/시간</th>
 						<th class="col-1">조회수</th>
 					</tr>
+				 <c:forEach var="board" items="${boardList}">
 					<tr>
-						<td>102</td>
-						<td><a href="#">피할수 없으면 즐겨라. <span class="text-danger">[1]</span></a></td>
-						<td>로버트 엘리엇</td>
-						<td>09:25:38</td>
-						<td>12</td>
+						<td>${board.bid}</td>
+						<td>
+							<a href="/bbd/board/detail?bid=${board.bid}">${board.title}
+								${(board.replyCount ge 1) ? 
+									'<span class="text-danger">[' + board.replyCount + ']</span>' : ''}
+							</a>
+						</td>
+						<td>${board.uname}</td>
+						<td>${board.modTime}</td>
+						<td>${board.viewCount}</td>
 					</tr>
-					<tr>
-						<td>101</td>
-						<td><a href="#">행복은 습관이다,그것을 몸에 지니라. <span
-								class="text-danger">[2]</span></a></td>
-						<td>허버드</td>
-						<td>2022-12-14</td>
-						<td>23</td>
-					</tr>
+				 </c:forEach>	
+					
 				</table>
 				<ul class="pagination justify-content-center mt-4">
 					<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
