@@ -91,14 +91,17 @@ public class UserDao {
 		return u;
 	}
 	
-	public List<User> listUsers() {		
+	public List<User> listUsers(int page) {		
 		Connection conn = getConnection();
+		int offset = (page - 1) * 10;
+		String sql = "SELECT * FROM users"
+					+ "	WHERE isDeleted=0"
+					+ "	ORDER BY regDate DESC, uid"
+					+ "	LIMIT 10 OFFSET " + offset + ";";		
 		List<User> list = new ArrayList<>();
-		String sql = "SELECT * FROM users WHERE isDeleted=0 ORDER BY regDate DESC, uid LIMIT 10;";
 		
 		try {
 			Statement stmt = conn.createStatement();
-			
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
 				User u = new User();
@@ -155,5 +158,25 @@ public class UserDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public int getUserCount() {
+		Connection conn = getConnection();
+		String sql = "SELECT COUNT(uid) FROM users WHERE isdeleted=0;";
+		int count = 0;
+		
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				count = rs.getInt(1);
+			}
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;
 	}
 }
