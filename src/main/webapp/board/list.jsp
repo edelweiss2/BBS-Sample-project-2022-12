@@ -59,8 +59,9 @@ th, td {
 						<td>${board.bid}</td>
 						<td>
 							<a href="/bbd/board/detail?bid=${board.bid}">${board.title}
-								${(board.replyCount ge 1) ? 
-									'<span class="text-danger">[' + board.replyCount + ']</span>' : ''}
+							<c:if test="${board.replyCount ge 1 }">
+								<span class="text-danger">[${board.replyCount}]</span>
+							</c:if>		
 							</a>
 						</td>
 						<td>${board.uname}</td>
