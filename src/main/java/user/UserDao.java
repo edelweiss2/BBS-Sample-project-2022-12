@@ -136,4 +136,24 @@ public class UserDao {
 			e.printStackTrace();
 		}
 	}
+
+	public void updateUserWithPassword(User u) {
+		Connection conn = getConnection();		
+		String sql = "UPDATE users SET pwd=?, uname=?, email=? WHERE uid=?;";
+		
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			String cryptedPwd = BCrypt.hashpw(u.getPwd(), BCrypt.gensalt());
+			pStmt.setString(1, cryptedPwd);
+			pStmt.setString(2, u.getUname());
+			pStmt.setString(3, u.getEmail());
+			pStmt.setString(4, u.getUid());
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
