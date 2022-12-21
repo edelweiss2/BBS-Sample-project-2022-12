@@ -43,7 +43,7 @@ public class BoardController extends HttpServlet {
 		switch(action) {
 		case "list":
 			int page = Integer.parseInt(request.getParameter("page"));
-			List<Board> list = dao.listUsers("title", "", page);
+			List<Board> list = dao.listBoard("title", "", page);
 			
 			session.setAttribute("currentBoardPage", page);
 			int totalBoardNo = dao.getBoardCount();
@@ -63,8 +63,9 @@ public class BoardController extends HttpServlet {
 		case "detail":
 			uid = request.getParameter("uid");
 			int bid = Integer.parseInt(request.getParameter("bid"));
-			// 조회수 증가, 본인 조회수 제외
-			if(! uid.equals(sessionUid)) {
+			String option = request.getParameter("option");
+			// 조회수 증가, 댓글 작성후거나 본인 조회수 제외
+			if((!uid.equals(sessionUid)) && option == null ) {
 				dao.increaseViewCount(bid);
 			}
 			board = dao.getBoardDetail(bid);
@@ -86,10 +87,31 @@ public class BoardController extends HttpServlet {
 				files = request.getParameter("files");
 				
 				board = new Board(sessionUid, title, content, files);
-				dao.insert(board);
+				dao.insertBoard(board);
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
 			break;
+			
+		case "update":
+			if (request.getMethod().equals("GET")) {
+				bid = Integer.parseInt(request.getParameter("bid"));
+				board = dao.getBoardDetail(bid);
+				request.setAttribute("board", board);
+				rd = request.getRequestDispatcher("/board/update.jsp");
+				rd.forward(request, response);
+			} else {
+				bid = Integer.parseInt(request.getParameter("bid"));
+				title = request.getParameter("title");
+				content = request.getParameter("content");
+				files = request.getParameter("files");
+				uid = request.getParameter("uid");
+				
+				board = new Board(bid, title, content, files);
+				dao.updateBoard(board);
+				response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid + "&option=DNI");
+			}
+			break;
+			
 		case "reply":
 			content = request.getParameter("content");
 			bid = Integer.parseInt(request.getParameter("bid"));
@@ -99,7 +121,7 @@ public class BoardController extends HttpServlet {
 			Reply reply = new Reply(content, isMine, sessionUid, bid);  // 댓글을 쓴사람 = sessionUid
 			rdao.insert(reply);
 			dao.increaseReplyCount(bid);
-			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid);
+			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid + "&option=DNI");
 			break;
 		
 		case "delete":
@@ -112,6 +134,8 @@ public class BoardController extends HttpServlet {
 			dao.deleteBoard(bid);
 			response.sendRedirect("/bbs/board/list?page=" + session.getAttribute("currentBoardPage"));
 			break;
+		
+		
 		default:
 			System.out.println(request.getMethod() + " 잘못된 경로");
 		}

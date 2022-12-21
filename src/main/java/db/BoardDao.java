@@ -29,7 +29,7 @@ public class BoardDao {
 		return conn;
 	}
 	
-	public List<Board> listUsers(String field, String query, int page) {
+	public List<Board> listBoard(String field, String query, int page) {
 		Connection conn = getConnection();
 		int offset = (page - 1) * 10;
 		String sql = "SELECT b.bid, b.uid, b.title, b.modtime, "
@@ -86,7 +86,7 @@ public class BoardDao {
 		return count;
 	}
 
-	public void insert(Board b) {
+	public void insertBoard(Board b) {
 		Connection conn = getConnection();
 		String sql = "INSERT INTO board(uid, title, content, files) VALUES (?, ?, ?, ?);";
 		try {
@@ -180,5 +180,25 @@ public class BoardDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Board updateBoard(Board b) {
+		Connection conn = getConnection();
+		String sql = "UPDATE board SET title=?, content=?, modTime=NOW(), files=? WHERE bid=?;";
+		
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, b.getTitle());
+			pStmt.setString(2, b.getContent());
+			pStmt.setString(3, b.getFiles());
+			pStmt.setInt(4, b.getBid());
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return b;
 	}
 }
