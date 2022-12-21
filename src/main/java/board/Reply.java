@@ -11,8 +11,8 @@ public class Reply {
 	private int bid;
 	private String uname;
 	
-	Reply() {}
-	Reply(String content, int isMine, String uid, int bid) {
+	public Reply() {}
+	public Reply(String content, int isMine, String uid, int bid) {
 		this.content = content;
 		this.isMine = isMine;
 		this.uid = uid;
