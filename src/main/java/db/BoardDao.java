@@ -151,4 +151,34 @@ public class BoardDao {
 			e.printStackTrace();
 		}
 	}
+
+	public void increaseReplyCount(int bid) {
+		Connection conn = getConnection();
+		String sql = "UPDATE board SET replyCount = replyCount+1 WHERE bid=?;";
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setInt(1, bid);
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteBoard(int bid) {
+		Connection conn = getConnection();
+		String sql = "UPDATE board SET isDeleted=1 WHERE bid=?;";
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setInt(1, bid);
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

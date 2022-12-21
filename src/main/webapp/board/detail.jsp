@@ -65,7 +65,7 @@
                         <div class="d-flex flex-row mt-1">
                             <div class="card bg-light text-dark w-75">
                                 <div class="card-body">
-                                    ${reply.uname}&nbsp;&nbsp;${fn:replace(reply.regDate, 'T', ' ')}<br>
+                                    ${reply.uname}&nbsp;&nbsp;${fn:replace(reply.regDate, 'T', ' ')} <br>
                                    	${fn:replace(reply.content, newline, '<br>')}  
                                 </div>
                             </div>
@@ -82,9 +82,10 @@
                         </div>
                       </c:if>  
                      </c:forEach>       
+                     
                         <form class="form-inline" action="/bbs/board/reply" method="post">
-                            <input type="hidden" name="bid" value="">     <!-- bid -->
-                            <input type="hidden" name="uid" value="">     <!-- uid -->
+                            <input type="hidden" name="bid" value="${board.bid}">     <!-- bid -->
+                            <input type="hidden" name="uid" value="${board.uid }">     <!-- uid -->
                             <table class="table table-borderless mt-2">
                                 <tr class="d-flex">
                                     <td class="col-1 text-end">

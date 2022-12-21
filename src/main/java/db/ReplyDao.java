@@ -11,6 +11,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import board.Board;
 import board.Reply;
 
 public class ReplyDao {
@@ -59,6 +60,23 @@ public class ReplyDao {
 		}
 		return list;
 	}
-
+	
+	public void insert(Reply r) {
+		Connection conn = getConnection();
+		String sql = "INSERT INTO reply(content, isMine, uid, bid) VALUES (?, ?, ?, ?);";
+		try {
+			PreparedStatement pStmt = conn.prepareStatement(sql);
+			pStmt.setString(1, r.getContent());
+			pStmt.setInt(2, r.getIsMine());
+			pStmt.setString(3, r.getUid());
+			pStmt.setInt(4, r.getBid());
+			
+			pStmt.executeUpdate();
+			pStmt.close();
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

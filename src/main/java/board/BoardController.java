@@ -20,7 +20,8 @@ import db.ReplyDao;
  * Servlet implementation class BoardController
  */
 @WebServlet({ "/board/list", "/board/search", "/board/write", "/board/update",
-	  "/board/detail", "/board/delete", "/board/deleteConfirm" })
+			  "/board/detail", "/board/delete", "/board/deleteConfirm",
+			  "/board/reply" })
 public class BoardController extends HttpServlet {
 
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -89,9 +90,28 @@ public class BoardController extends HttpServlet {
 				response.sendRedirect("/bbs/board/list?page=1");
 			}
 			break;
+		case "reply":
+			content = request.getParameter("content");
+			bid = Integer.parseInt(request.getParameter("bid"));
+			uid = request.getParameter("uid");	// 게시글을 작성한 사람의 uid
+			// 게시글 uid와 로그인한 사용자 uid(sessionUid)가 같으면 isMine=1
+			int isMine = (uid.equals(sessionUid)) ? 1 : 0;	
+			Reply reply = new Reply(content, isMine, sessionUid, bid);  // 댓글을 쓴사람 = sessionUid
+			rdao.insert(reply);
+			dao.increaseReplyCount(bid);
+			response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid);
+			break;
+		
+		case "delete":
+			bid = Integer.parseInt(request.getParameter("bid"));
+			response.sendRedirect("/bbs/board/delete.jsp?bid=" + bid);
+			break;
 			
-			
-			
+		case "deleteConfirm":
+			bid = Integer.parseInt(request.getParameter("bid"));
+			dao.deleteBoard(bid);
+			response.sendRedirect("/bbs/board/list?page=" + session.getAttribute("currentBoardPage"));
+			break;
 		default:
 			System.out.println(request.getMethod() + " 잘못된 경로");
 		}
