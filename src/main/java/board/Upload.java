@@ -25,9 +25,7 @@ import javax.servlet.http.Part;
 public class Upload extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setCharacterEncoding("uft-8");
-		String tmpPath = "c:/Temp";
-        System.out.println("tmpPath: " + tmpPath);
+		String tmpPath = "c:/Temp/upload";
         File file = new File(tmpPath);
         if(!file.exists()) 
             file.mkdirs();
@@ -50,10 +48,10 @@ public class Upload extends HttpServlet {
 //            }
 //        }
         	
-        Part filePart = null;
+        Part filePart = null;	
         List<String> fileList = new ArrayList<>();
         for (int i=1; i<=2; i++) {
-            filePart = request.getPart("file" + i);			//name이 file1, file2를 받음
+            filePart = request.getPart("file" + i);		// name이 file1, file2
             if (filePart == null)
             	continue;
             fileName = filePart.getSubmittedFileName();
@@ -65,8 +63,8 @@ public class Upload extends HttpServlet {
             for (Part part : request.getParts()) {
                 part.write(tmpPath + File.separator + fileName);
             }
+            response.getWriter().print("The file is uploaded sucessfully.");	
         }
-        response.getWriter().print("The file is uploaded sucessfully.");	
 	}
 
 }

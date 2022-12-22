@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,7 +6,7 @@
     <style>
         th, td { text-align: center; }
     </style>
-        <script>
+    <script>
     	var index = 1;
     	$(document).ready(function() {
     		$('#btn').on('click', function(e) {
@@ -28,29 +27,13 @@
             
             <!-- =================== main =================== -->
             <div class="col-sm-9">
-            	<h3><strong>파일 업로드</strong></h3>
+            	<h3><strong>파일 다운로드</strong></h3>
             	<hr>
                 <div class="row">
 			        <div class="col-1"></div>
 			        <div class="col-10">
-					    <form action="/bbs/board/upload" method="post" enctype="multipart/form-data">
-					    	<table class="table table-borderless">
-					    		<tr>
-					    			<td>param:</td>
-					    			<td colspan="2"><input class="form-control" type="text" name="param"></td>
-					    		</tr>
-					    		<tr>
-					    			<td>파일:</td>
-					    			<td><input class="form-control" type="file" name="file1" id="file1"></td>
-			                        <td><input class="form-control" type="file" name="file2" id="file2"></td>
-					    		</tr>
-					    		<tr>
-					    			<td colspan="3"><input type="submit" value="Upload"></td>
-					    		</tr>
-					    	</table>
-					        <div id="additionalFile"></div>
-					    </form>		            
-					        
+					    <a href="c:/Temp/upload/1.svg" download>1.svg</a><br>
+					    <a href="/bbs/board/download?file=2.svg">2.svg</a>
 			        </div>
 			        <div class="col-1"></div>
 			    </div>

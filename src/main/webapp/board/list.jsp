@@ -6,11 +6,17 @@
 <head>
 <%@ include file="../common/heading.jsp"%>
 <style>
-th, td {
-	text-align: center;
-}
+th, td {text-align: center;}
 </style>
 </head>
+<script>
+	function search() {
+		const field = document.getElementById("field").value;
+		const query = document.getElementById("query").value;
+		location.href = "/bbs/board/list?p=${currentBoardPage}&f=" + field + "&q="+ query;
+		
+	}
+</script>
 
 <body>
 	<%@ include file="../common/top.jsp"%>
@@ -21,29 +27,29 @@ th, td {
 			<!-- ======== main ======== -->
 			<div class="col-sm-9">
 				<table class="table table-sm table-borderless">
-					<form action="" method="post">
-						<tr class="d-flex">
-							<td class="col-6" style="text-align: left;">
-								<h3>
-									<strong>게시글 목록</strong> <span style="font-size: 0.6em;">
-										<a href="/bbs/board/write" class="ms-5"><i class="far fa-file-alt"></i>
-											글쓰기</a>
-									</span>
-								</h3>
-							</td>
-							<td class="col-2"><select class="form-select me-2">
-									<option value="1" selected>제목</option>
-									<option value="2">본문</option>
-									<option value="3">글쓴이</option>
-							</select></td>
-							<td class="col-3"><input class="form-control me-2"
-								type="search" placeholder="Search" aria-label="Search">
-							</td>
-							<td class="col-1">
-								<button class="btn btn-outline-primary" type="submit">검색</button>
-							</td>
-						</tr>
-					</form>
+					<tr class="d-flex">
+						<td class="col-6" style="text-align: left;">
+							<h3>
+								<strong>게시글 목록</strong> <span style="font-size: 0.6em;">
+									<a href="/bbs/board/write" class="ms-5"><i class="far fa-file-alt"></i>
+										글쓰기</a>
+								</span>
+							</h3>
+						</td>
+						<td class="col-2">
+							<select class="form-select me-2" name="f" id="field">
+									<option value="title" selected>제목</option>
+									<option value="content">본문</option>
+									<option value="uname">글쓴이</option>
+							</select>
+						</td>
+						<td class="col-3">
+						<input class="form-control me-2" type="search" placeholder="검색 내용" name="q" id="query">
+						</td>
+						<td class="col-1">
+							<button class="btn btn-outline-primary" type="submit" onclick="search()">검색</button>
+						</td>
+					</tr>
 				</table>
 				<hr>
 				<table class="table mt-2">
@@ -79,13 +85,27 @@ th, td {
 					
 				</table>
 				<ul class="pagination justify-content-center mt-4">
-					<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-				   <c:forEach var="page" items="${pageList}" varStatus="loop">	
-					<li class="page-item ${(currentBoardPage eq page)? 'active' : '' }">
-						<a class="page-link" href="/bbs/board/list?page=${page}">${page}</a>
+				<c:if test="${currentBoardPage gt 10 }">
+					<li class="page-item">
+						<a class="page-link" href="/bbs/board/list?page=${startPage - 1}&f=${field}&q=${query}">&laquo;</a>
 					</li>
-				   </c:forEach>
+				</c:if>
+				<c:if test="${currentBoardPage le 10 }">
+					<li class="page-item">
+						<a class="page-link" href="#">&laquo;</a>
+					</li>
+				</c:if>	
+			    <c:forEach var="page" items="${pageList}" varStatus="loop">	
+					<li class="page-item ${(currentBoardPage eq page)? 'active' : '' }">
+						<a class="page-link" href="/bbs/board/list?p=${page}&f=${field}&q=${query}">${page}</a>
+					</li>
+			    </c:forEach>
+				<c:if test="${totalPages gt endPage }">
+					<li class="page-item"><a class="page-link" href="/bbs/board/list?p=${endPage + 1}&f=${field}&q=${query}">&raquo;</a></li>
+				</c:if>
+				<c:if test="${totalPages le endPage }">
 					<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+				</c:if>	
 				</ul>
 			</div>
 			<!-- ======== main ======== -->

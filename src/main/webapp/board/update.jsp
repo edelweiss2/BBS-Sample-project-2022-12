@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,7 +18,7 @@
             
             <!-- =================== main =================== -->
             <div class="col-sm-9">
-            	<h3><strong>게시글 쓰기</strong></h3>
+            	<h3><strong>게시글 수정</strong></h3>
             	<hr>
                 <div class="row">
 			        <div class="col-1"></div>
@@ -31,7 +32,7 @@
 			                        <td><input class="form-control" type="text" name="title" id="title" value="${board.title}"></td>
 			                    </tr>
 			                    <tr>
-			                        <td><label for="uname">내용</label></td>
+			                        <td><label for="content">내용</label></td>
 			                        <td>
 			                        	<textarea class="form-control" name="content" id="content" rows="10">${board.content}</textarea>
 			                        </td>
