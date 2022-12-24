@@ -1,5 +1,6 @@
 package board;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class BoardController extends HttpServlet {
 		response.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		String title = null, content = null, files = null, uid = null, today=null;
+		String jsonFiles = "";
 		int bid = 0, totalBoardNo = 0, totalPages = 0, page = 0;
 		Board board = null;
 		List<Board> list = null;
@@ -81,7 +83,7 @@ public class BoardController extends HttpServlet {
 			today = LocalDate.now().toString();		
 			request.setAttribute("today", today);
 			request.setAttribute("boardList", list);
-			rd = request.getRequestDispatcher("/board/list.jsp");
+			rd = request.getRequestDispatcher("/WEB-INF/view/board/list.jsp");
 			rd.forward(request, response);
 			break;
 			
@@ -94,7 +96,7 @@ public class BoardController extends HttpServlet {
 				dao.increaseViewCount(bid);
 			}
 			board = dao.getBoardDetail(bid);
-			String jsonFiles = board.getFiles();
+			jsonFiles = board.getFiles();
 			if (!(jsonFiles == null || jsonFiles.equals(""))) {
 				JSONUtil json = new JSONUtil();
 				List<String> fileList = json.parse(jsonFiles);
@@ -105,15 +107,16 @@ public class BoardController extends HttpServlet {
 			request.setAttribute("replyList", replyList);
 			
 			
-			rd = request.getRequestDispatcher("/board/detail.jsp");
+			rd = request.getRequestDispatcher("/WEB-INF/view/board/detail.jsp");
 			rd.forward(request, response);
 			break;
 			
 		case "write":	
 			if (request.getMethod().equals("GET")) {
-				response.sendRedirect("/bbs/board/write.jsp");
+				request.getRequestDispatcher("/WEB-INF/view/board/write2.jsp").forward(request, response);
+//				response.sendRedirect("/bbs/board/write.jsp");
 			} else {
-				// /board/fileupload 로 부터 전달받은 데이터를 읽음
+//				 /board/fileupload 로 부터 전달받은 데이터를 읽음
 				title = (String)request.getAttribute("title");
 				content = (String)request.getAttribute("content");
 				files = (String) request.getAttribute("files");
@@ -138,7 +141,7 @@ public class BoardController extends HttpServlet {
 		
 		case "delete":
 			bid = Integer.parseInt(request.getParameter("bid"));
-			response.sendRedirect("/bbs/board/delete.jsp?bid=" + bid);
+			request.getRequestDispatcher("/WEB-INF/view/board/delete.jsp?bid=" + bid).forward(request, response);
 			break;
 			
 		case "deleteConfirm":
@@ -151,21 +154,46 @@ public class BoardController extends HttpServlet {
 			if (request.getMethod().equals("GET")) {
 				bid = Integer.parseInt(request.getParameter("bid"));
 				board = dao.getBoardDetail(bid);
+				
+				jsonFiles = board.getFiles();
+				if (!(jsonFiles == null || jsonFiles.equals(""))) {
+					JSONUtil json = new JSONUtil();
+					List<String> fileList = json.parse(jsonFiles);
+					session.setAttribute("fileList", fileList);
+				}
+				
 				request.setAttribute("board", board);
-				rd = request.getRequestDispatcher("/board/update.jsp");
+				rd = request.getRequestDispatcher("/WEB-INF/view/board/update2.jsp");	// Editor version
+				// rd = request.getRequestDispatcher("/board/update.jsp");
 				rd.forward(request, response);
 			} else {
-				bid = Integer.parseInt(request.getParameter("bid"));
-				title = request.getParameter("title");
-				content = request.getParameter("content");
-				files = request.getParameter("files");
-				uid = request.getParameter("uid");
+				String bid_ = (String) request.getAttribute("bid");
+				bid = Integer.parseInt(bid_);
+				uid = (String) request.getAttribute("uid");
+				title = (String) request.getAttribute("title");
+				content = (String) request.getAttribute("content");
+				
+				List<String> listAdditionalFiles = (List<String>) session.getAttribute("fileList");
+				
+				String delName = (String) request.getAttribute("delFile");
+				
+				if (!(delName == null || delName.equals(""))) {
+					File delFile = new File("c:/Temp/upload/" + delName);
+					delFile.delete();
+					listAdditionalFiles.remove(delName);
+				}
+				JSONUtil json = new JSONUtil();
+				files = (String) request.getAttribute("files");		// FileUpload에서 넘어온 것
+				List<String> tmpList = json.parse(files);
+				for (String tmp: tmpList)
+					listAdditionalFiles.add(tmp);
+				files = json.stringify(listAdditionalFiles);
 				
 				board = new Board(bid, title, content, files);
 				dao.updateBoard(board);
 				response.sendRedirect("/bbs/board/detail?bid=" + bid + "&uid=" + uid + "&option=DNI");
 			}
-			break;	
+			break;
 		
 		
 		default:

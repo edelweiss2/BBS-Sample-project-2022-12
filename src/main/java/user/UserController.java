@@ -51,12 +51,12 @@ public class UserController extends HttpServlet {
 			request.setAttribute("pageList", pageList);
 			
 			request.setAttribute("userList", list);
-			rd = request.getRequestDispatcher("/user/list.jsp");
+			rd = request.getRequestDispatcher("/WEB-INF/view/user/list.jsp");
 			rd.forward(request, response);
 			break;
 		case "login":
 			if (request.getMethod().equals("GET")) {
-				response.sendRedirect("/bbs/user/login.jsp");
+				request.getRequestDispatcher("/WEB-INF/view/user/login.jsp").forward(request, response);
 			} else {
 				uid = request.getParameter("uid");
 				pwd = request.getParameter("pwd");
@@ -70,20 +70,20 @@ public class UserController extends HttpServlet {
 						// Welcome message
 						request.setAttribute("msg", u.getUname() + "님 환영합니다.");
 						request.setAttribute("url", "/bbs/board/list?p=1&f=&q=");
-						rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+						rd = request.getRequestDispatcher("/WEB-INF/view/user/alertMsg.jsp");
 						rd.forward(request, response);
 					} else {
 						// 재 로그인 페이지
 						request.setAttribute("msg", "잘못된 패스워드 입니다. 다시 입력하세요.");
 						request.setAttribute("url", "/bbs/user/login");
-						rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+						rd = request.getRequestDispatcher("/WEB-INF/view/user/alertMsg.jsp");
 						rd.forward(request, response);
 					}
 				} else {				// uid 가 없음
 					// 회원 가입 페이지로 안내
 					request.setAttribute("msg", "회원 가입 페이지로 이동합니다.");
 					request.setAttribute("url", "/bbs/user/register");
-					rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+					rd = request.getRequestDispatcher("/WEB-INF/view/user/alertMsg.jsp");
 					rd.forward(request, response);
 				}
 			}
@@ -94,7 +94,8 @@ public class UserController extends HttpServlet {
 			break;
 		case "register":
 			if(request.getMethod().equals("GET")) {
-				response.sendRedirect("/bbs/user/register.jsp");
+				request.getRequestDispatcher("/WEB-INF/view/user/register.jsp").forward(request, response);
+				
 			} else {
 				uid = request.getParameter("uid").strip();		// 스트립이 좌우의 블랭크를 없에서 좀더 안정적
 				pwd = request.getParameter("pwd").strip();
@@ -108,7 +109,7 @@ public class UserController extends HttpServlet {
 				} else {
 					request.setAttribute("msg", "패스워드 입력이 잘못되었습니다.");
 					request.setAttribute("url", "/bbs/user/register");
-					rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+					rd = request.getRequestDispatcher("/WEB-INF/view/user/alertMsg.jsp");
 					rd.forward(request, response);
 				}
 			}
@@ -118,7 +119,7 @@ public class UserController extends HttpServlet {
 				uid = request.getParameter("uid");
 				u = dao.getUserInfo(uid);
 				request.setAttribute("user", u);
-				rd = request.getRequestDispatcher("/user/update.jsp");
+				rd = request.getRequestDispatcher("/WEB-INF/view/user/update.jsp");
 				rd.forward(request, response);
 			} else {
 				uid = request.getParameter("uid");
@@ -131,28 +132,28 @@ public class UserController extends HttpServlet {
 					u = new User(uid, uname, email);
 					dao.updateUser(u);
 					session.setAttribute("uname", uname);
-					response.sendRedirect("/bbs/user/list?p=" + session.getAttribute("currentUserPage") +"&f=&q=");
-				} else if (pwd.equals(pwd2) ) {				// 패스워드가 올바른 경우
+					response.sendRedirect("/bbs/user/list?page=" + session.getAttribute("currentUserPage"));
+				} else if (pwd.equals(pwd2)) {				// 패스워드가 올바른 경우
 					u = new User(uid, pwd, uname, email);
 					dao.updateUserWithPassword(u);
 					session.setAttribute("uname", uname);
-					response.sendRedirect("/bbs/user/list?p=" + session.getAttribute("currentUserPage")+"&f=&q=");
+					response.sendRedirect("/bbs/user/list?page=" + session.getAttribute("currentUserPage"));
 				} else {									// 패스워드가 틀린 경우
 					request.setAttribute("msg", "패스워드 입력이 잘못되었습니다.");
 					request.setAttribute("url", "/bbs/user/update?uid=" + uid);
-					rd = request.getRequestDispatcher("/user/alertMsg.jsp");
+					rd = request.getRequestDispatcher("/WEB-INF/view/user/alertMsg.jsp");
 					rd.forward(request, response);
 				}
 			}
 			break;
 		case "delete":
 			uid = request.getParameter("uid");
-			response.sendRedirect("/bbs/user/delete.jsp?uid=" + uid);
+			request.getRequestDispatcher("/WEB-INF/view/user/delete.jsp?uid=" + uid).forward(request, response);
 			break;
 		case "deleteConfirm":
 			uid = request.getParameter("uid");
 			dao.deleteUser(uid);
-			response.sendRedirect("/bbs/user/list?p=" + session.getAttribute("currentUserPage") +"&f=&q=");
+			response.sendRedirect("/bbs/user/list?page=" + session.getAttribute("currentUserPage"));
 			break;	
 		default:
 			System.out.println(request.getMethod() + "잘못된 경로 입니다.");
